@@ -203,7 +203,8 @@
             return (
                 <section 
                     id="about" 
-                    className="relative min-h-[600px] flex items-center justify-center bg-cover bg-center bg-no-repeat pt-16"
+                    // 修改点：将 min-h-[600px] 改为 min-h-screen，让其占满整个屏幕高度
+                    className="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat pt-16"
                     style={{
                         backgroundImage: "url('https://img2.baidu.com/it/u=123633110,1231448452&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800')"
                     }}
