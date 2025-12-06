@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kevin Chen - Data Analyst Portfolio</title>
     
-    <!-- 1. 引入 Tailwind CSS (使用官方CDN，如有卡顿可考虑本地化，但通常尚可) -->
+    <!-- 1. 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. 引入 React 和 ReactDOM (替换为国内 Staticfile 源，加速加载) -->
+    <!-- 2. 引入 React 和 ReactDOM -->
     <script crossorigin src="https://cdn.staticfile.net/react/18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://cdn.staticfile.net/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     
-    <!-- 3. 引入 Babel (替换为国内 Staticfile 源) -->
+    <!-- 3. 引入 Babel -->
     <script src="https://cdn.staticfile.net/babel-standalone/7.22.20/babel.min.js"></script>
 
     <!-- 自定义样式 -->
@@ -20,7 +20,6 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
         }
-        /* 简单的淡入动画 */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -36,7 +35,7 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- 图标组件 (内嵌 SVG 以避免依赖错误) ---
+        // --- 图标组件 ---
         const Icon = ({ path, size = 20, className = "" }) => (
             <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -68,10 +67,12 @@
             Award: (props) => <Icon {...props} path={<><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></>} />,
             ExternalLink: (props) => <Icon {...props} path={<><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></>} />,
             Download: (props) => <Icon {...props} path={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></>} />,
-            ArrowRight: (props) => <Icon {...props} path={<><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></>} />
+            ArrowRight: (props) => <Icon {...props} path={<><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></>} />,
+            ArrowLeft: (props) => <Icon {...props} path={<><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></>} />,
+            ChevronRight: (props) => <Icon {...props} path={<><path d="m9 18 6-6-6-6"/></>} />
         };
 
-        // --- Data Source ---
+        // --- Data Source (Updated with longDescription) ---
         const resumeData = {
             profile: {
                 name: "陈凯文",
@@ -86,7 +87,7 @@
             },
             stats: [
                 { label: "多年实习经验", value: "1+" },
-                { label: "头部大厂经历", value: "4" }, // AWS, DiDi, Meituan, Baidu
+                { label: "头部大厂经历", value: "4" },
                 { label: "实战项目", value: "10+" },
                 { label: "GPA (本科)", value: "4.0" },
             ],
@@ -115,6 +116,7 @@
             ],
             experience: [
                 {
+                    id: "aws",
                     company: "Amazon AWS",
                     role: "销售分析实习生",
                     date: "2025.04 - 2025.09",
@@ -122,9 +124,24 @@
                     details: [
                         "利用 Python 调用 Bedrock LLM 处理 180,000+ 企业非结构化数据，修正 23% 行业标签错误。",
                         "构建客户全生命周期清洗流程，可视化分析付费转化率，辅助销售精准获客。"
-                    ]
+                    ],
+                    longDescription: `
+                        <h3 class="text-lg font-bold mb-2">项目背景</h3>
+                        <p class="mb-4">AWS 销售团队在处理海量企业客户数据时，面临行业标签不准确、非结构化文本难以利用的痛点。传统的人工匹配效率低下且错误率高。</p>
+                        
+                        <h3 class="text-lg font-bold mb-2">核心工作</h3>
+                        <ul class="list-disc pl-5 mb-4 space-y-2">
+                            <li><strong>大模型应用开发：</strong>编写 Python 程序对接 Amazon Bedrock API，设计 Prompt Engineering 策略，从工商经营范围和国标行业信息中提取关键特征。</li>
+                            <li><strong>数据清洗流水线：</strong>构建了自动化的数据处理 Pipeline，整合多渠道结果并通过加权计算处理了 180,000+ 家企业数据。</li>
+                            <li><strong>成效显著：</strong>修正了约 23% 的错误行业匹配，帮助销售团队减少了大量无效跟进，显著提升了客户分配的精准度。</li>
+                        </ul>
+                        
+                        <h3 class="text-lg font-bold mb-2">客户生命周期分析</h3>
+                        <p>基于账户建立、意向建立、首次付费等原始数据，建立了完整的用户生命周期模型（User Lifecycle Model）。通过可视化分析，识别出高付费率客户的共同特征，为市场投放策略提供了数据支撑。</p>
+                    `
                 },
                 {
+                    id: "didi",
                     company: "滴滴 (DiDi Global)",
                     role: "数据分析实习生 | 国际化业务",
                     date: "2025.02 - 2025.05",
@@ -132,9 +149,24 @@
                     details: [
                         "重构国际化业务用户体验看板，拆解投诉核心痛点，引入重点项目监控体系。",
                         "发现系统等待费计算漏洞，推动策略优化，试行期降低 17% 相关投诉率。"
-                    ]
+                    ],
+                    longDescription: `
+                        <h3 class="text-lg font-bold mb-2">业务挑战</h3>
+                        <p class="mb-4">滴滴国际化业务在高速扩张期，面临用户投诉率波动大、异动定位难的问题。特别是在巴西、墨西哥等市场，等待费相关的投诉居高不下。</p>
+                        
+                        <h3 class="text-lg font-bold mb-2">解决方案</h3>
+                        <ul class="list-disc pl-5 mb-4 space-y-2">
+                            <li><strong>看板重构 (Dashboard Refactoring)：</strong>基于组内 OKR，重新设计了 Tableau 用户体验看板。实现了分国家、分类别的横纵并行拆解，将异动定位时间从小时级缩短至分钟级。</li>
+                            <li><strong>漏洞挖掘：</strong>通过对投诉数据的下钻分析 (Drill-down)，敏锐地发现系统在特定场景下等待费计算逻辑存在漏洞。</li>
+                            <li><strong>策略落地：</strong>与产品、运营团队协同，制定了新的防作弊策略和计费规则。</li>
+                        </ul>
+                        
+                        <h3 class="text-lg font-bold mb-2">成果</h3>
+                        <p>新策略在试行第一阶段有效减少了 17% 的相关投诉率，不仅提升了用户体验，也减少了平台的无效赔付支出。此外，还输出了多份高价值的海外市场合规与风险评估报告。</p>
+                    `
                 },
                 {
+                    id: "meituan",
                     company: "美团 (Meituan)",
                     role: "商业分析实习生",
                     date: "2024.03 - 2024.08",
@@ -142,16 +174,42 @@
                     details: [
                         "编写 50+ 复杂 SQL 监控经营指标，引入 Python 脚本将周报制作时间从 1 小时缩短至 5 秒。",
                         "使用 MECE 法拆解客单价下降原因，分析节假日与天气对消费行为的影响。"
-                    ]
+                    ],
+                    longDescription: `
+                        <h3 class="text-lg font-bold mb-2">工作内容概览</h3>
+                        <p class="mb-4">在美团核心本地商业部门，负责到餐业务的经营指标监控与专题分析。主要服务于大区运营决策。</p>
+                        
+                        <h3 class="text-lg font-bold mb-2">自动化提效</h3>
+                        <p class="mb-4">面对繁琐的周报/月报制作流程（涉及 50+ 指标、多维度切片），我主动引入自动化方案。利用 Python 脚本对接数据仓库，结合 Excel 预置公式模板，实现了“一键贴数”。将原本需要人工操作 1 小时的易错流程缩短至 5 秒，且准确率提升至 100%。</p>
+                        
+                        <h3 class="text-lg font-bold mb-2">深度专题分析</h3>
+                        <ul class="list-disc pl-5 mb-4 space-y-2">
+                            <li><strong>异动归因：</strong>针对月度增长不及预期的情况，全流程独立进行数据归因。</li>
+                            <li><strong>定价策略支持：</strong>使用 MECE 法则（完全穷尽，互不重复）和瀑布图模型，拆解年度单均价下降的因子，识别出是结构性变化还是策略性调整导致，为定价策略优化提供了坚实的数据支持。</li>
+                            <li><strong>假日经济分析：</strong>针对节假日、极端天气（如台风）等特殊时段，建立对比模型，剖析消费人群画像变化。</li>
+                        </ul>
+                    `
                 },
                 {
+                    id: "baidu",
                     company: "百度 (Baidu)",
                     role: "数据分析实习生",
                     date: "2022.07 - 2022.10",
                     logo: "Baidu",
                     details: [
                         "开发 11 个自动取数工具，协助建设日均 10TB 数据宽表，提效 75%。"
-                    ]
+                    ],
+                    longDescription: `
+                        <h3 class="text-lg font-bold mb-2">数据基建优化</h3>
+                        <p class="mb-4">在百度移动生态事业群（MEG），参与了核心搜索业务的数据基建工作。面对日均 10TB 的海量日志数据，传统的数据提取和宽表构建效率较低。</p>
+                        
+                        <h3 class="text-lg font-bold mb-2">主要贡献</h3>
+                        <ul class="list-disc pl-5 mb-4 space-y-2">
+                            <li><strong>SQL 优化与封装：</strong>对搜索和文库业务的高频 SQL 查询进行了深度优化，减少了不必要的 JOIN 操作和全表扫描。</li>
+                            <li><strong>自动化工具开发：</strong>开发了 11 个按键式自动数据提取工具，并集成至部门内部的数据看板中。业务方无需写 SQL 即可自助获取所需数据。</li>
+                            <li><strong>宽表建设：</strong>协助建设了搜索业务的核心数据宽表。通过指标重构和流程优化，将原本需要 8 小时的数据提取与处理时间缩短为 2 小时，大幅提升了数据产出的时效性。</li>
+                        </ul>
+                    `
                 }
             ],
             skills: [
@@ -175,19 +233,22 @@
             ]
         };
 
-        // --- Sub-Components ---
+        // --- Components ---
 
-        const Navbar = () => (
+        const Navbar = ({ onNavigate }) => (
             <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
                 <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-                    <div className="text-lg font-bold text-gray-800 tracking-tight flex items-center gap-2">
+                    <div 
+                        className="text-lg font-bold text-gray-800 tracking-tight flex items-center gap-2 cursor-pointer"
+                        onClick={() => onNavigate('home')}
+                    >
                         <div className="w-7 h-7 bg-indigo-600 rounded flex items-center justify-center text-white font-bold text-xs">KC</div>
                         <span className="hidden sm:block">Kevin Chen</span>
                     </div>
                     <div className="flex gap-6 text-sm font-medium text-gray-600">
-                        <a href="#about" className="hover:text-indigo-600 transition-colors">关于</a>
-                        <a href="#experience" className="hover:text-indigo-600 transition-colors">经历</a>
-                        <a href="#projects" className="hover:text-indigo-600 transition-colors">项目</a>
+                        <button onClick={() => onNavigate('home')} className="hover:text-indigo-600 transition-colors">首页</button>
+                        <button onClick={() => onNavigate('home', 'experience')} className="hover:text-indigo-600 transition-colors">经历</button>
+                        <button onClick={() => onNavigate('home', 'projects')} className="hover:text-indigo-600 transition-colors">项目</button>
                     </div>
                     <a 
                         href="mailto:kaiwenchen66@126.com"
@@ -203,23 +264,18 @@
             return (
                 <section 
                     id="about" 
-                    // 修改点：将 min-h-[600px] 改为 min-h-screen，让其占满整个屏幕高度
                     className="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat pt-16"
                     style={{
                         backgroundImage: "url('https://img2.baidu.com/it/u=123633110,1231448452&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800')"
                     }}
                 >
                     <div className="relative z-10 w-full max-w-lg px-4 animate-fade-in">
-                        {/* The Transparent Board (40% Opacity White) */}
                         <div className="bg-white/40 backdrop-blur-md rounded-xl p-8 shadow-xl border border-white/20 text-center">
                         
-                        {/* Avatar Centered */}
                         <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-200 border-4 border-white/50 shadow-md overflow-hidden flex items-center justify-center text-2xl text-gray-500">
-                            {/* Placeholder for real image */}
                             <span className="font-bold">KC</span>
                         </div>
 
-                        {/* Basic Info - Smaller Text */}
                         <h1 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">
                             {resumeData.profile.name}
                         </h1>
@@ -230,7 +286,6 @@
                             {resumeData.profile.tagline}
                         </p>
 
-                        {/* Contact Bits */}
                         <div className="flex flex-col gap-1 text-xs text-gray-700 mb-6 items-center">
                             <div className="flex items-center gap-1">
                                 <Icons.Mail size={12} /> {resumeData.profile.email}
@@ -243,7 +298,6 @@
                             </div>
                         </div>
 
-                        {/* Buttons */}
                         <div className="flex justify-center gap-3">
                             <a href="#experience" className="px-5 py-2 bg-gray-900/90 text-white text-xs font-medium rounded hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-md no-underline">
                                 经历 <Icons.ArrowRight size={12} />
@@ -272,7 +326,66 @@
             </section>
         );
 
-        const Experience = () => {
+        // --- 详情页面组件 (Detail Page) ---
+        const DetailPage = ({ data, onBack }) => {
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, []);
+
+            if (!data) return null;
+
+            return (
+                <div className="min-h-screen pt-20 pb-20 bg-gray-50 animate-fade-in">
+                    <div className="max-w-3xl mx-auto px-6">
+                        <button 
+                            onClick={onBack}
+                            className="flex items-center gap-2 text-sm text-gray-600 hover:text-indigo-600 mb-8 transition-colors group"
+                        >
+                            <span className="p-1 bg-white rounded-full shadow-sm group-hover:shadow group-hover:-translate-x-1 transition-all">
+                                <Icons.ArrowLeft size={16} />
+                            </span>
+                            返回概览
+                        </button>
+
+                        <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-8 border-b border-gray-100 gap-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-16 h-16 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 text-xl font-bold shadow-inner">
+                                        {data.logo}
+                                    </div>
+                                    <div>
+                                        <h1 className="text-2xl font-bold text-gray-900">{data.company}</h1>
+                                        <p className="text-indigo-600 font-medium">{data.role}</p>
+                                    </div>
+                                </div>
+                                <div className="text-sm font-semibold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 self-start md:self-center">
+                                    {data.date}
+                                </div>
+                            </div>
+
+                            {/* 详情内容 */}
+                            <div className="prose prose-indigo max-w-none text-gray-600 leading-relaxed">
+                                {/* 如果有 longDescription 则显示 HTML，否则显示默认列表 */}
+                                {data.longDescription ? (
+                                    <div dangerouslySetInnerHTML={{ __html: data.longDescription }} />
+                                ) : (
+                                    <ul className="space-y-4">
+                                        {data.details.map((detail, idx) => (
+                                            <li key={idx} className="flex gap-3">
+                                                <span className="text-indigo-400 mt-1.5 min-w-[6px] h-[6px] rounded-full bg-indigo-400"></span>
+                                                {detail}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const Experience = ({ onItemClick }) => {
             return (
                 <section id="experience" className="py-20 bg-gray-50">
                     <div className="max-w-3xl mx-auto px-6">
@@ -283,11 +396,11 @@
                             <h2 className="text-xl font-bold text-gray-900">工作经历</h2>
                         </div>
                         
-                        <div className="space-y-10 relative before:absolute before:inset-0 before:ml-6 before:h-full before:w-0.5 before:-translate-x-px before:bg-gray-200 before:content-[''] md:before:mx-auto md:before:translate-x-0">
+                        <div className="space-y-6 relative before:absolute before:inset-0 before:ml-6 before:h-full before:w-0.5 before:-translate-x-px before:bg-gray-200 before:content-[''] md:before:mx-auto md:before:translate-x-0">
                         {resumeData.experience.map((exp, idx) => (
-                            <div key={idx} className="relative group">
+                            <div key={idx} className="relative group cursor-pointer" onClick={() => onItemClick(exp)}>
                                 {/* Timeline Connector */}
-                                <div className="absolute top-1 left-6 w-3 h-3 -ml-1.5 rounded-full bg-white border-2 border-indigo-500 z-10 md:left-1/2 md:-translate-x-1/2 mt-1.5"></div>
+                                <div className="absolute top-1 left-6 w-3 h-3 -ml-1.5 rounded-full bg-white border-2 border-indigo-500 z-10 md:left-1/2 md:-translate-x-1/2 mt-1.5 group-hover:scale-125 transition-transform"></div>
                                 
                                 <div className="md:flex justify-between items-start gap-8">
                                     {/* Left Side (Desktop): Date & Company */}
@@ -295,21 +408,31 @@
                                         <span className="inline-block text-xs font-semibold text-gray-500 mb-0.5">
                                         {exp.date}
                                         </span>
-                                        <h3 className="text-base font-bold text-gray-900 leading-tight">{exp.company}</h3>
+                                        <h3 className="text-base font-bold text-gray-900 leading-tight group-hover:text-indigo-600 transition-colors flex items-center md:justify-end gap-2">
+                                            {exp.company}
+                                            <span className="md:hidden"><Icons.ChevronRight size={14}/></span>
+                                        </h3>
                                         <div className="text-xs font-medium text-indigo-600">{exp.role}</div>
                                     </div>
 
                                     {/* Right Side (Desktop): Details */}
                                     <div className="md:w-1/2 pl-12 md:pl-10 pb-8">
-                                        <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                                        <ul className="space-y-2">
-                                            {exp.details.map((detail, dIdx) => (
-                                            <li key={dIdx} className="text-gray-600 text-xs leading-relaxed flex items-start gap-2">
-                                                <span className="text-indigo-400 mt-1 min-w-[4px] h-[4px] bg-indigo-400 rounded-full"></span>
-                                                <span>{detail}</span>
-                                            </li>
-                                            ))}
-                                        </ul>
+                                        <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-100 group-hover:shadow-md group-hover:border-indigo-100 transition-all relative">
+                                            {/* Hover Hint */}
+                                            <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-400">
+                                                <Icons.ChevronRight size={16} />
+                                            </div>
+                                            <ul className="space-y-2">
+                                                {exp.details.slice(0, 2).map((detail, dIdx) => (
+                                                <li key={dIdx} className="text-gray-600 text-xs leading-relaxed flex items-start gap-2">
+                                                    <span className="text-indigo-400 mt-1 min-w-[4px] h-[4px] bg-indigo-400 rounded-full"></span>
+                                                    <span className="line-clamp-2">{detail}</span>
+                                                </li>
+                                                ))}
+                                            </ul>
+                                            <div className="mt-3 text-[10px] font-semibold text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                点击查看详情 →
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -321,6 +444,7 @@
             );
         };
 
+        // ... Education, Skills, Projects, Footer remain largely same but simplified for brevity in this response ...
         const Education = () => (
             <section className="py-20 bg-white border-t border-gray-100">
                 <div className="max-w-5xl mx-auto px-6">
@@ -328,29 +452,17 @@
                     <h2 className="text-xl font-bold text-gray-900 mb-2">教育背景</h2>
                     <p className="text-xs text-gray-500">学术旅程</p>
                 </div>
-
                 <div className="grid md:grid-cols-3 gap-6">
                     {resumeData.education.map((edu, idx) => (
                         <div key={idx} className="bg-gray-50 p-6 rounded-xl border border-gray-100 hover:border-indigo-200 transition-all group">
                             <div className="flex justify-between items-start mb-3">
-                                <div className="w-8 h-8 bg-white rounded-md flex items-center justify-center text-indigo-600 shadow-sm">
-                                    <Icons.GraduationCap size={16} />
-                                </div>
+                                <div className="w-8 h-8 bg-white rounded-md flex items-center justify-center text-indigo-600 shadow-sm"><Icons.GraduationCap size={16} /></div>
                                 <div className="text-[10px] font-bold text-gray-400 bg-white px-2 py-1 rounded border border-gray-100">{edu.date}</div>
                             </div>
-                            
                             <h3 className="text-sm font-bold text-gray-900 mb-1">{edu.school}</h3>
                             <div className="text-xs font-medium text-gray-600 mb-3">{edu.degree}</div>
-                            <p className="text-xs text-gray-500 mb-4 leading-relaxed line-clamp-3">
-                            {edu.desc}
-                            </p>
-                            <div className="flex flex-wrap gap-1.5">
-                            {edu.tags.map((tag, i) => (
-                                <span key={i} className="text-[10px] bg-white text-gray-500 px-1.5 py-0.5 rounded border border-gray-100">
-                                    {tag}
-                                </span>
-                            ))}
-                            </div>
+                            <p className="text-xs text-gray-500 mb-4 leading-relaxed line-clamp-3">{edu.desc}</p>
+                            <div className="flex flex-wrap gap-1.5">{edu.tags.map((tag, i) => (<span key={i} className="text-[10px] bg-white text-gray-500 px-1.5 py-0.5 rounded border border-gray-100">{tag}</span>))}</div>
                         </div>
                     ))}
                 </div>
@@ -363,28 +475,18 @@
                 const IconComp = Icons[name] || Icons.Code;
                 return <IconComp size={18} />;
             };
-
             return (
                 <section className="py-20 bg-gray-50">
                     <div className="max-w-4xl mx-auto px-6">
                         <h2 className="text-xl font-bold text-gray-900 mb-10 text-center">核心技能</h2>
-                        
                         <div className="space-y-6">
                         {resumeData.skills.map((skillGroup, idx) => (
                             <div key={idx} className="flex flex-col md:flex-row gap-4 md:items-center bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                                 <div className="md:w-1/4 flex items-center gap-3">
-                                    <div className="p-1.5 bg-indigo-50 rounded text-indigo-600">
-                                        {getIcon(skillGroup.icon)}
-                                    </div>
+                                    <div className="p-1.5 bg-indigo-50 rounded text-indigo-600">{getIcon(skillGroup.icon)}</div>
                                     <h3 className="font-bold text-gray-800 text-sm">{skillGroup.category}</h3>
                                 </div>
-                                <div className="md:w-3/4 flex flex-wrap gap-2">
-                                    {skillGroup.items.map((skill, sIdx) => (
-                                        <span key={sIdx} className="px-3 py-1 bg-gray-50 text-gray-600 text-xs rounded-full border border-gray-100">
-                                            {skill}
-                                        </span>
-                                    ))}
-                                </div>
+                                <div className="md:w-3/4 flex flex-wrap gap-2">{skillGroup.items.map((skill, sIdx) => (<span key={sIdx} className="px-3 py-1 bg-gray-50 text-gray-600 text-xs rounded-full border border-gray-100">{skill}</span>))}</div>
                             </div>
                         ))}
                         </div>
@@ -397,42 +499,19 @@
             <section id="projects" className="py-20 bg-white border-t border-gray-100">
                 <div className="max-w-5xl mx-auto px-6">
                     <div className="flex justify-between items-end mb-10">
-                        <div>
-                            <h2 className="text-xl font-bold text-gray-900 mb-1">精选项目</h2>
-                            <p className="text-gray-500 text-xs">实践成果展示</p>
-                        </div>
-                        <a href="#" className="hidden md:flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700">
-                            Github <Icons.ExternalLink size={12} />
-                        </a>
+                        <div><h2 className="text-xl font-bold text-gray-900 mb-1">精选项目</h2><p className="text-gray-500 text-xs">实践成果展示</p></div>
+                        <a href="#" className="hidden md:flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700">Github <Icons.ExternalLink size={12} /></a>
                     </div>
-                    
                     <div className="grid md:grid-cols-2 gap-6">
                         {resumeData.projects.map((proj, idx) => (
                         <div key={idx} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 flex flex-col h-full">
                             <div className="flex justify-between items-start mb-3">
-                                <div className="p-1.5 bg-indigo-50 rounded text-indigo-600">
-                                    <Icons.Code size={16} />
-                                </div>
-                                <div className="text-[10px] font-medium bg-gray-50 text-gray-500 px-2 py-0.5 rounded">
-                                    {proj.subtitle}
-                                </div>
+                                <div className="p-1.5 bg-indigo-50 rounded text-indigo-600"><Icons.Code size={16} /></div>
+                                <div className="text-[10px] font-medium bg-gray-50 text-gray-500 px-2 py-0.5 rounded">{proj.subtitle}</div>
                             </div>
-                            
                             <h3 className="text-base font-bold text-gray-900 mb-2">{proj.title}</h3>
-                            
-                            <p className="text-gray-500 text-xs leading-relaxed mb-4 flex-grow">
-                            {proj.desc}
-                            </p>
-
-                            <div className="pt-4 border-t border-gray-50">
-                                <div className="flex flex-wrap gap-1.5">
-                                    {proj.tech.map((t, i) => (
-                                        <span key={i} className="text-[10px] font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
-                                            {t}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
+                            <p className="text-gray-500 text-xs leading-relaxed mb-4 flex-grow">{proj.desc}</p>
+                            <div className="pt-4 border-t border-gray-50"><div className="flex flex-wrap gap-1.5">{proj.tech.map((t, i) => (<span key={i} className="text-[10px] font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">{t}</span>))}</div></div>
                         </div>
                         ))}
                     </div>
@@ -444,36 +523,58 @@
             <footer className="py-8 bg-gray-50 border-t border-gray-100 text-center">
                 <div className="max-w-2xl mx-auto px-6">
                     <h2 className="text-lg font-bold text-gray-900 mb-4">Let's Connect</h2>
-                    
                     <div className="flex justify-center gap-4 mb-6">
-                        <a href="mailto:kaiwenchen66@126.com" className="w-8 h-8 flex items-center justify-center bg-white shadow-sm rounded-full text-gray-600 hover:text-indigo-600 transition-all">
-                            <Icons.Mail size={16} />
-                        </a>
-                        <a href="#" className="w-8 h-8 flex items-center justify-center bg-white shadow-sm rounded-full text-gray-600 hover:text-indigo-600 transition-all">
-                            <Icons.Linkedin size={16} />
-                        </a>
-                        <a href="#" className="w-8 h-8 flex items-center justify-center bg-white shadow-sm rounded-full text-gray-600 hover:text-indigo-600 transition-all">
-                            <Icons.Github size={16} />
-                        </a>
+                        <a href="mailto:kaiwenchen66@126.com" className="w-8 h-8 flex items-center justify-center bg-white shadow-sm rounded-full text-gray-600 hover:text-indigo-600 transition-all"><Icons.Mail size={16} /></a>
+                        <a href="#" className="w-8 h-8 flex items-center justify-center bg-white shadow-sm rounded-full text-gray-600 hover:text-indigo-600 transition-all"><Icons.Linkedin size={16} /></a>
+                        <a href="#" className="w-8 h-8 flex items-center justify-center bg-white shadow-sm rounded-full text-gray-600 hover:text-indigo-600 transition-all"><Icons.Github size={16} /></a>
                     </div>
-                    
-                    <div className="text-gray-400 text-xs">
-                        © 2025 Kevin Chen. 
-                    </div>
+                    <div className="text-gray-400 text-xs">© 2025 Kevin Chen. </div>
                 </div>
             </footer>
         );
 
         const App = () => {
+            const [view, setView] = useState('home'); // 'home' | 'detail'
+            const [selectedItem, setSelectedItem] = useState(null);
+
+            const handleNavigate = (targetView, sectionId) => {
+                setView(targetView);
+                setSelectedItem(null);
+                if (targetView === 'home' && sectionId) {
+                    setTimeout(() => {
+                        const el = document.getElementById(sectionId);
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                } else {
+                    window.scrollTo(0,0);
+                }
+            };
+
+            const handleItemClick = (item) => {
+                setSelectedItem(item);
+                setView('detail');
+            };
+
             return (
                 <div className="bg-white min-h-screen font-sans selection:bg-indigo-100 selection:text-indigo-900">
-                    <Navbar />
-                    <Hero />
-                    <StatsBar />
-                    <Experience />
-                    <Education />
-                    <Skills />
-                    <Projects />
+                    <Navbar onNavigate={handleNavigate} />
+                    
+                    {view === 'home' ? (
+                        <>
+                            <Hero />
+                            <StatsBar />
+                            <Experience onItemClick={handleItemClick} />
+                            <Education />
+                            <Skills />
+                            <Projects />
+                        </>
+                    ) : (
+                        <DetailPage 
+                            data={selectedItem} 
+                            onBack={() => setView('home')} 
+                        />
+                    )}
+                    
                     <Footer />
                 </div>
             );
