@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kevin Chen - Data Analyst Portfolio</title>
+    
+    <!-- 1. 引入 Tailwind CSS (使用官方CDN，如有卡顿可考虑本地化，但通常尚可) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. 引入 React 和 ReactDOM (替换为国内 Staticfile 源，加速加载) -->
+    <script crossorigin src="https://cdn.staticfile.net/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdn.staticfile.net/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    
+    <!-- 3. 引入 Babel (替换为国内 Staticfile 源) -->
+    <script src="https://cdn.staticfile.net/babel-standalone/7.22.20/babel.min.js"></script>
+
+    <!-- 自定义样式 -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+        }
+        /* 简单的淡入动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- 图标组件 (内嵌 SVG 以避免依赖错误) ---
+        const Icon = ({ path, size = 20, className = "" }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width={size} 
+                height={size} 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className={className}
+            >
+                {path}
+            </svg>
+        );
+
+        const Icons = {
+            Github: (props) => <Icon {...props} path={<><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></>} />,
+            Linkedin: (props) => <Icon {...props} path={<><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></>} />,
+            Mail: (props) => <Icon {...props} path={<><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></>} />,
+            Phone: (props) => <Icon {...props} path={<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>} />,
+            MapPin: (props) => <Icon {...props} path={<><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></>} />,
+            Briefcase: (props) => <Icon {...props} path={<><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>} />,
+            GraduationCap: (props) => <Icon {...props} path={<><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></>} />,
+            Code: (props) => <Icon {...props} path={<><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></>} />,
+            BarChart2: (props) => <Icon {...props} path={<><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></>} />,
+            Cpu: (props) => <Icon {...props} path={<><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></>} />,
+            Award: (props) => <Icon {...props} path={<><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></>} />,
+            ExternalLink: (props) => <Icon {...props} path={<><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></>} />,
+            Download: (props) => <Icon {...props} path={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></>} />,
+            ArrowRight: (props) => <Icon {...props} path={<><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></>} />
+        };
+
+        // --- Data Source ---
+        const resumeData = {
+            profile: {
+                name: "陈凯文",
+                enName: "Kevin Chen",
+                title: "数据分析师 / Data Analyst",
+                tagline: "在数据中发现价值，用技术简化复杂",
+                location: "北京",
+                email: "kaiwenchen66@126.com",
+                phone: "+86 15601394399",
+                github: "github.com/kevinchen",
+                linkedin: "linkedin.com/in/kevinchen",
+            },
+            stats: [
+                { label: "多年实习经验", value: "1+" },
+                { label: "头部大厂经历", value: "4" }, // AWS, DiDi, Meituan, Baidu
+                { label: "实战项目", value: "10+" },
+                { label: "GPA (本科)", value: "4.0" },
+            ],
+            education: [
+                {
+                    school: "新加坡国立大学 (NUS)",
+                    degree: "计算机科学硕士 (Master of Computing)",
+                    date: "2025 - 2026",
+                    desc: "QS Top 8 高校。专注于数据驱动决策与数字化转型。",
+                    tags: ["数据驱动决策", "商业分析"]
+                },
+                {
+                    school: "加州大学伯克利分校 (UC Berkeley)",
+                    degree: "学期交换项目",
+                    date: "2023.08 - 2023.12",
+                    desc: "GPA 3.7/4.0。修读 CS61A, 认知计算建模等核心课程。",
+                    tags: ["CS61A", "计算建模"]
+                },
+                {
+                    school: "北京化工大学",
+                    degree: "数据科学与大数据技术 (工学学士)",
+                    date: "2020 - 2024",
+                    desc: "GPA: 87.45 (排名 4/60). 获校级优秀生奖学金 (Top 5%).",
+                    tags: ["校级优秀生", "互联网+奖项"]
+                }
+            ],
+            experience: [
+                {
+                    company: "Amazon AWS",
+                    role: "销售分析实习生",
+                    date: "2025.04 - 2025.09",
+                    logo: "AWS",
+                    details: [
+                        "利用 Python 调用 Bedrock LLM 处理 180,000+ 企业非结构化数据，修正 23% 行业标签错误。",
+                        "构建客户全生命周期清洗流程，可视化分析付费转化率，辅助销售精准获客。"
+                    ]
+                },
+                {
+                    company: "滴滴 (DiDi Global)",
+                    role: "数据分析实习生 | 国际化业务",
+                    date: "2025.02 - 2025.05",
+                    logo: "DiDi",
+                    details: [
+                        "重构国际化业务用户体验看板，拆解投诉核心痛点，引入重点项目监控体系。",
+                        "发现系统等待费计算漏洞，推动策略优化，试行期降低 17% 相关投诉率。"
+                    ]
+                },
+                {
+                    company: "美团 (Meituan)",
+                    role: "商业分析实习生",
+                    date: "2024.03 - 2024.08",
+                    logo: "Meituan",
+                    details: [
+                        "编写 50+ 复杂 SQL 监控经营指标，引入 Python 脚本将周报制作时间从 1 小时缩短至 5 秒。",
+                        "使用 MECE 法拆解客单价下降原因，分析节假日与天气对消费行为的影响。"
+                    ]
+                },
+                {
+                    company: "百度 (Baidu)",
+                    role: "数据分析实习生",
+                    date: "2022.07 - 2022.10",
+                    logo: "Baidu",
+                    details: [
+                        "开发 11 个自动取数工具，协助建设日均 10TB 数据宽表，提效 75%。"
+                    ]
+                }
+            ],
+            skills: [
+                { category: "数据分析核心", items: ["Python (Pandas/NumPy)", "SQL (Advanced)", "Tableau", "Excel VBA"], icon: "BarChart2" },
+                { category: "工程与 AI", items: ["AWS Bedrock (LLM)", "ELK Stack", "数据挖掘", "ETL 流程"], icon: "Cpu" },
+                { category: "通用能力", items: ["商业洞察", "策略分析", "英语 (雅思 8.0)", "跨部门沟通"], icon: "Award" },
+            ],
+            projects: [
+                {
+                    title: "基于 LLM 的企业行业智能分类",
+                    subtitle: "亚马逊 AWS 实习项目",
+                    tech: ["Python", "AWS Bedrock", "NLP"],
+                    desc: "针对 18万+ 企业的工商经营范围文本，利用大语言模型进行语义理解与标准化行业映射，解决了传统关键词匹配准确率低的问题，大幅提升数据清洗效率。",
+                },
+                {
+                    title: "校园人流热点图可视化系统",
+                    subtitle: "北京化工大学信息中心项目",
+                    tech: ["ELK Stack", "Data Viz", "Real-time"],
+                    desc: "基于 WiFi 日志数据的实时人流与热点图可视化系统。服务全校 10,000+ 师生，支持疫情防控期间的人流预警与轨迹追踪。",
+                }
+            ]
+        };
+
+        // --- Sub-Components ---
+
+        const Navbar = () => (
+            <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
+                <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+                    <div className="text-lg font-bold text-gray-800 tracking-tight flex items-center gap-2">
+                        <div className="w-7 h-7 bg-indigo-600 rounded flex items-center justify-center text-white font-bold text-xs">KC</div>
+                        <span className="hidden sm:block">Kevin Chen</span>
+                    </div>
+                    <div className="flex gap-6 text-sm font-medium text-gray-600">
+                        <a href="#about" className="hover:text-indigo-600 transition-colors">关于</a>
+                        <a href="#experience" className="hover:text-indigo-600 transition-colors">经历</a>
+                        <a href="#projects" className="hover:text-indigo-600 transition-colors">项目</a>
+                    </div>
+                    <a 
+                        href="mailto:kaiwenchen66@126.com"
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-gray-900 rounded hover:bg-gray-800 transition-all flex items-center gap-2"
+                    >
+                        <Icons.Mail size={14} /> 联系
+                    </a>
+                </div>
+            </nav>
+        );
+
+        const Hero = () => {
+            return (
+                <section 
+                    id="about" 
+                    className="relative min-h-[600px] flex items-center justify-center bg-cover bg-center bg-no-repeat pt-16"
+                    style={{
+                        backgroundImage: "url('https://img2.baidu.com/it/u=123633110,1231448452&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800')"
+                    }}
+                >
+                    <div className="relative z-10 w-full max-w-lg px-4 animate-fade-in">
+                        {/* The Transparent Board (40% Opacity White) */}
+                        <div className="bg-white/40 backdrop-blur-md rounded-xl p-8 shadow-xl border border-white/20 text-center">
+                        
+                        {/* Avatar Centered */}
+                        <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-200 border-4 border-white/50 shadow-md overflow-hidden flex items-center justify-center text-2xl text-gray-500">
+                            {/* Placeholder for real image */}
+                            <span className="font-bold">KC</span>
+                        </div>
+
+                        {/* Basic Info - Smaller Text */}
+                        <h1 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">
+                            {resumeData.profile.name}
+                        </h1>
+                        <p className="text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
+                            {resumeData.profile.title}
+                        </p>
+                        <p className="text-sm text-gray-800 mb-6 font-light max-w-xs mx-auto leading-relaxed">
+                            {resumeData.profile.tagline}
+                        </p>
+
+                        {/* Contact Bits */}
+                        <div className="flex flex-col gap-1 text-xs text-gray-700 mb-6 items-center">
+                            <div className="flex items-center gap-1">
+                                <Icons.Mail size={12} /> {resumeData.profile.email}
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <Icons.Phone size={12} /> {resumeData.profile.phone}
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <Icons.MapPin size={12} /> {resumeData.profile.location}
+                            </div>
+                        </div>
+
+                        {/* Buttons */}
+                        <div className="flex justify-center gap-3">
+                            <a href="#experience" className="px-5 py-2 bg-gray-900/90 text-white text-xs font-medium rounded hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-md no-underline">
+                                经历 <Icons.ArrowRight size={12} />
+                            </a>
+                            <button className="px-5 py-2 bg-white/60 text-gray-900 text-xs font-medium rounded border border-white/40 hover:bg-white/80 transition-colors flex items-center gap-2">
+                                简历 <Icons.Download size={12} />
+                            </button>
+                        </div>
+
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const StatsBar = () => (
+            <section className="bg-white py-6 border-b border-gray-100">
+                <div className="max-w-4xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {resumeData.stats.map((stat, idx) => (
+                        <div key={idx} className="text-center">
+                            <div className="text-lg font-bold text-gray-800">{stat.value}</div>
+                            <div className="text-[10px] text-gray-500 uppercase tracking-wide">{stat.label}</div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+        );
+
+        const Experience = () => {
+            return (
+                <section id="experience" className="py-20 bg-gray-50">
+                    <div className="max-w-3xl mx-auto px-6">
+                        <div className="flex items-center gap-3 mb-10">
+                            <div className="p-2 bg-indigo-100 rounded text-indigo-600">
+                                <Icons.Briefcase size={20} />
+                            </div>
+                            <h2 className="text-xl font-bold text-gray-900">工作经历</h2>
+                        </div>
+                        
+                        <div className="space-y-10 relative before:absolute before:inset-0 before:ml-6 before:h-full before:w-0.5 before:-translate-x-px before:bg-gray-200 before:content-[''] md:before:mx-auto md:before:translate-x-0">
+                        {resumeData.experience.map((exp, idx) => (
+                            <div key={idx} className="relative group">
+                                {/* Timeline Connector */}
+                                <div className="absolute top-1 left-6 w-3 h-3 -ml-1.5 rounded-full bg-white border-2 border-indigo-500 z-10 md:left-1/2 md:-translate-x-1/2 mt-1.5"></div>
+                                
+                                <div className="md:flex justify-between items-start gap-8">
+                                    {/* Left Side (Desktop): Date & Company */}
+                                    <div className="md:w-1/2 md:text-right md:pr-10 mb-2 md:mb-0 pl-12 md:pl-0">
+                                        <span className="inline-block text-xs font-semibold text-gray-500 mb-0.5">
+                                        {exp.date}
+                                        </span>
+                                        <h3 className="text-base font-bold text-gray-900 leading-tight">{exp.company}</h3>
+                                        <div className="text-xs font-medium text-indigo-600">{exp.role}</div>
+                                    </div>
+
+                                    {/* Right Side (Desktop): Details */}
+                                    <div className="md:w-1/2 pl-12 md:pl-10 pb-8">
+                                        <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                                        <ul className="space-y-2">
+                                            {exp.details.map((detail, dIdx) => (
+                                            <li key={dIdx} className="text-gray-600 text-xs leading-relaxed flex items-start gap-2">
+                                                <span className="text-indigo-400 mt-1 min-w-[4px] h-[4px] bg-indigo-400 rounded-full"></span>
+                                                <span>{detail}</span>
+                                            </li>
+                                            ))}
+                                        </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const Education = () => (
+            <section className="py-20 bg-white border-t border-gray-100">
+                <div className="max-w-5xl mx-auto px-6">
+                <div className="text-center mb-12">
+                    <h2 className="text-xl font-bold text-gray-900 mb-2">教育背景</h2>
+                    <p className="text-xs text-gray-500">学术旅程</p>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-6">
+                    {resumeData.education.map((edu, idx) => (
+                        <div key={idx} className="bg-gray-50 p-6 rounded-xl border border-gray-100 hover:border-indigo-200 transition-all group">
+                            <div className="flex justify-between items-start mb-3">
+                                <div className="w-8 h-8 bg-white rounded-md flex items-center justify-center text-indigo-600 shadow-sm">
+                                    <Icons.GraduationCap size={16} />
+                                </div>
+                                <div className="text-[10px] font-bold text-gray-400 bg-white px-2 py-1 rounded border border-gray-100">{edu.date}</div>
+                            </div>
+                            
+                            <h3 className="text-sm font-bold text-gray-900 mb-1">{edu.school}</h3>
+                            <div className="text-xs font-medium text-gray-600 mb-3">{edu.degree}</div>
+                            <p className="text-xs text-gray-500 mb-4 leading-relaxed line-clamp-3">
+                            {edu.desc}
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                            {edu.tags.map((tag, i) => (
+                                <span key={i} className="text-[10px] bg-white text-gray-500 px-1.5 py-0.5 rounded border border-gray-100">
+                                    {tag}
+                                </span>
+                            ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                </div>
+            </section>
+        );
+
+        const Skills = () => {
+            const getIcon = (name) => {
+                const IconComp = Icons[name] || Icons.Code;
+                return <IconComp size={18} />;
+            };
+
+            return (
+                <section className="py-20 bg-gray-50">
+                    <div className="max-w-4xl mx-auto px-6">
+                        <h2 className="text-xl font-bold text-gray-900 mb-10 text-center">核心技能</h2>
+                        
+                        <div className="space-y-6">
+                        {resumeData.skills.map((skillGroup, idx) => (
+                            <div key={idx} className="flex flex-col md:flex-row gap-4 md:items-center bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                                <div className="md:w-1/4 flex items-center gap-3">
+                                    <div className="p-1.5 bg-indigo-50 rounded text-indigo-600">
+                                        {getIcon(skillGroup.icon)}
+                                    </div>
+                                    <h3 className="font-bold text-gray-800 text-sm">{skillGroup.category}</h3>
+                                </div>
+                                <div className="md:w-3/4 flex flex-wrap gap-2">
+                                    {skillGroup.items.map((skill, sIdx) => (
+                                        <span key={sIdx} className="px-3 py-1 bg-gray-50 text-gray-600 text-xs rounded-full border border-gray-100">
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const Projects = () => (
+            <section id="projects" className="py-20 bg-white border-t border-gray-100">
+                <div className="max-w-5xl mx-auto px-6">
+                    <div className="flex justify-between items-end mb-10">
+                        <div>
+                            <h2 className="text-xl font-bold text-gray-900 mb-1">精选项目</h2>
+                            <p className="text-gray-500 text-xs">实践成果展示</p>
+                        </div>
+                        <a href="#" className="hidden md:flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700">
+                            Github <Icons.ExternalLink size={12} />
+                        </a>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-6">
+                        {resumeData.projects.map((proj, idx) => (
+                        <div key={idx} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 flex flex-col h-full">
+                            <div className="flex justify-between items-start mb-3">
+                                <div className="p-1.5 bg-indigo-50 rounded text-indigo-600">
+                                    <Icons.Code size={16} />
+                                </div>
+                                <div className="text-[10px] font-medium bg-gray-50 text-gray-500 px-2 py-0.5 rounded">
+                                    {proj.subtitle}
+                                </div>
+                            </div>
+                            
+                            <h3 className="text-base font-bold text-gray-900 mb-2">{proj.title}</h3>
+                            
+                            <p className="text-gray-500 text-xs leading-relaxed mb-4 flex-grow">
+                            {proj.desc}
+                            </p>
+
+                            <div className="pt-4 border-t border-gray-50">
+                                <div className="flex flex-wrap gap-1.5">
+                                    {proj.tech.map((t, i) => (
+                                        <span key={i} className="text-[10px] font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
+                                            {t}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+
+        const Footer = () => (
+            <footer className="py-8 bg-gray-50 border-t border-gray-100 text-center">
+                <div className="max-w-2xl mx-auto px-6">
+                    <h2 className="text-lg font-bold text-gray-900 mb-4">Let's Connect</h2>
+                    
+                    <div className="flex justify-center gap-4 mb-6">
+                        <a href="mailto:kaiwenchen66@126.com" className="w-8 h-8 flex items-center justify-center bg-white shadow-sm rounded-full text-gray-600 hover:text-indigo-600 transition-all">
+                            <Icons.Mail size={16} />
+                        </a>
+                        <a href="#" className="w-8 h-8 flex items-center justify-center bg-white shadow-sm rounded-full text-gray-600 hover:text-indigo-600 transition-all">
+                            <Icons.Linkedin size={16} />
+                        </a>
+                        <a href="#" className="w-8 h-8 flex items-center justify-center bg-white shadow-sm rounded-full text-gray-600 hover:text-indigo-600 transition-all">
+                            <Icons.Github size={16} />
+                        </a>
+                    </div>
+                    
+                    <div className="text-gray-400 text-xs">
+                        © 2025 Kevin Chen. 
+                    </div>
+                </div>
+            </footer>
+        );
+
+        const App = () => {
+            return (
+                <div className="bg-white min-h-screen font-sans selection:bg-indigo-100 selection:text-indigo-900">
+                    <Navbar />
+                    <Hero />
+                    <StatsBar />
+                    <Experience />
+                    <Education />
+                    <Skills />
+                    <Projects />
+                    <Footer />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
